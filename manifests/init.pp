@@ -169,6 +169,18 @@ class locales (
     ensure => $package_ensure,
   }
 
+  # Workaround for https://github.com/saz/puppet-locales/issues/28
+  case $::lsbdistcodename {
+    'xenial': {
+      ensure_packages(['language-pack-en'])
+
+      Package['language-pack-en'] ->
+      File[$config_file]
+    }
+    default: {
+    }
+  }
+
   if $update_locale_pkg != false {
     package { $update_locale_pkg:
       ensure => $package_ensure,
